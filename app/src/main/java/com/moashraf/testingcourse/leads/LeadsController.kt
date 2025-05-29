@@ -1,4 +1,4 @@
-package com.moashraf.testingcourse
+package com.moashraf.testingcourse.leads
 
 class LeadsController {
 

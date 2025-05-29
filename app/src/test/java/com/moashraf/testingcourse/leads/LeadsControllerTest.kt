@@ -1,7 +1,5 @@
 package com.moashraf.testingcourse.leads
 
-import com.moashraf.testingcourse.Lead
-import com.moashraf.testingcourse.LeadsController
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import org.junit.After
