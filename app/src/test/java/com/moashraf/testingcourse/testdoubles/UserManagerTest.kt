@@ -1,10 +1,7 @@
-package com.moashraf.testingcourse.leads
+package com.moashraf.testingcourse.testdoubles
 
-import com.moashraf.testingcourse.testdoubles.Logger
 import io.mockk.mockk
-import com.moashraf.testingcourse.testdoubles.User
-import com.moashraf.testingcourse.testdoubles.UserManager
-import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase
 import org.junit.Test
 
 class UserManagerTest {
@@ -16,7 +13,6 @@ class UserManagerTest {
         val userManager = UserManager(logger = logger)
         val user = User(userName = "Mohamed")
         userManager.addUser(user)
-        assertEquals(1, userManager.users.size)
+        TestCase.assertEquals(1, userManager.users.size)
     }
-
 }
