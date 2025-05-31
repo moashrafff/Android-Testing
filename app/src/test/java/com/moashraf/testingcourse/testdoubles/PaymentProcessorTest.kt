@@ -2,7 +2,7 @@ package com.moashraf.testingcourse.testdoubles
 
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.*
+import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
 class PaymentProcessorTest {
