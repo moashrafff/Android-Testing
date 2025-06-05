@@ -44,4 +44,5 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation (libs.mockk.android)
     testImplementation (libs.mockk.agent)
+    testImplementation (libs.kotlinx.coroutines.test)
 }
