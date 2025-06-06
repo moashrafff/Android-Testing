@@ -2,6 +2,7 @@ package com.moashraf.testingcourse.coroutines
 
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 
 class GetUserProfile(private val userRepository: UserRepository) {
 
@@ -30,22 +31,38 @@ interface UserRepository {
     suspend fun getRate(): Float
 }
 
-class FakeUserRepositoryImpl : UserRepository{
+class FakeUserRepositoryImpl : UserRepository {
     override suspend fun getName(): String = "Nadine"
 
-    override suspend fun getFriends(): List<Friend> = listOf(Friend(id = "1", name = "Sara"), Friend(id = "2", name = "Menna"))
+    override suspend fun getFriends(): List<Friend> =
+        listOf(Friend(id = "1", name = "Sara"), Friend(id = "2", name = "Menna"))
 
     override suspend fun getRate(): Float = 5f
 }
 
+class FakeUserRepositoryImplV2 : UserRepository {
+    override suspend fun getName(): String {
+        delay(1000); return "Nadine"
+    }
+
+    override suspend fun getFriends(): List<Friend> {
+        delay(1000)
+        return listOf(Friend(id = "1", name = "Sara"), Friend(id = "2", name = "Menna"))
+    }
+
+    override suspend fun getRate(): Float {
+        delay(1000); return 5f
+    }
+}
+
 
 data class Friend(
-    val id : String,
-    val name : String
+    val id: String,
+    val name: String
 )
 
 data class Profile(
-    val name : String,
-    val friends : List<Friend>,
-    val rate : Float
+    val name: String,
+    val friends: List<Friend>,
+    val rate: Float
 )
