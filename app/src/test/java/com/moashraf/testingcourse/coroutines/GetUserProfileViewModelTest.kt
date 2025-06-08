@@ -14,15 +14,18 @@ import org.junit.Before
 import org.junit.Test
 
 class GetUserProfileViewModelTest {
+
     private val testDispatcher = StandardTestDispatcher()
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
-    fun setup(){
+    fun setup() {
         Dispatchers.setMain(testDispatcher)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Given success scenario when get user profile then return profile data`() = runTest{
+    fun `Given success scenario when get user profile then return profile data`() = runTest {
         val useCase: GetUserProfile = mockk()
         coEvery { useCase.getProfileDataAsync() } coAnswers {
             Profile(
@@ -40,19 +43,17 @@ class GetUserProfileViewModelTest {
         assertEquals(
             ProfileUiState.Success(
                 Profile(
-                    name = "Nadine",
-                    friends = listOf(
-                        Friend(id = "1", name = "Sara"),
-                        Friend(id = "2", name = "Menna")
-                    ),
-                    rate = 5f
+                    name = "Nadine", friends = listOf(
+                        Friend(id = "1", name = "Sara"), Friend(id = "2", name = "Menna")
+                    ), rate = 5f
                 )
             ), viewModel.profileState.value
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `Given error scenario when get user profile then return exception`() = runTest{
+    fun `Given error scenario when get user profile then return exception`() = runTest {
         val useCase: GetUserProfile = mockk()
         coEvery { useCase.getProfileDataAsync() } throws IllegalStateException("Something went wrong")
 
@@ -66,10 +67,10 @@ class GetUserProfileViewModelTest {
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun close(){
+    fun close() {
         Dispatchers.resetMain()
     }
-
 
 }
