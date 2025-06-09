@@ -1,5 +1,6 @@
 [versions]
 agp = "8.9.1"
+kluentAndroid = "1.72"
 kotlin = "2.0.21"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -10,6 +11,7 @@ kotlinxCoroutinesTest = "1.10.2"
 lifecycleViewmodelKtx = "2.9.1"
 material = "1.10.0"
 mockkVersion = "1.13.8"
+turbine = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -18,10 +20,12 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kluent-android = { module = "org.amshove.kluent:kluent-android", version.ref = "kluentAndroid" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkVersion" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkVersion" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

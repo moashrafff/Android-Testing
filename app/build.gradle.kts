@@ -46,4 +46,6 @@ dependencies {
     testImplementation (libs.mockk.agent)
     testImplementation (libs.kotlinx.coroutines.test)
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
+    testImplementation(libs.turbine)
+    testImplementation (libs.kluent.android)
 }

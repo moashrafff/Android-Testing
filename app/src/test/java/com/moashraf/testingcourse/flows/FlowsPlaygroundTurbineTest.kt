@@ -1,5 +1,6 @@
 package com.moashraf.testingcourse.flows
 
+import app.cash.turbine.test
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -7,21 +8,24 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
-class FlowsPlaygroundTest {
+class FlowsPlaygroundTurbineTest {
 
-    // 1- testing the flow itself
-    // 2- testing the flow consumer
-
+    // trying turbine with kluent
     @Test
     fun `Test flow itself`() = runTest {
         val flow = flowOf(1, 2, 3, 4)
-        val res = flow.toList()
-        assertEquals(res, listOf(1, 2, 3, 4))
+        flow.test {
+            1 shouldBeEqualTo awaitItem()
+            2 shouldBeEqualTo awaitItem()
+            3 shouldBeEqualTo awaitItem()
+            4 shouldBeEqualTo awaitItem()
+            awaitComplete()
+        }
     }
 
     @Test
@@ -74,22 +78,17 @@ class FlowsPlaygroundTest {
 
     @Test
     fun `Test flow consumer with exception`() = runTest {
-        val res = mutableListOf<Int>()
 
-        runCatching {
-            val flow = flow {
-                emit(1)
-                throw IllegalStateException("Something went wrong")
-            }
-
-            flow.collect {
-                res.add(it)
-            }
-        }.onFailure {
-            res.add(-1)
+        val flow = flow {
+            emit(1)
+            throw IllegalStateException("Something went wrong")
         }
 
-        assertEquals(res, listOf(1, -1))
+        flow.test {
+            assertEquals(1, awaitItem())
+            assertEquals("Something went wrong",awaitError().message)
+        }
+
     }
 
 }
