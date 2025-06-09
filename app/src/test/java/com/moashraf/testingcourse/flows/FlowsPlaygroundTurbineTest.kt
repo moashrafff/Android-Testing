@@ -6,15 +6,20 @@ import com.moashraf.testingcourse.coroutines.ProfileUiState
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -134,6 +139,41 @@ class FlowsPlaygroundTurbineTest {
             job.start()
             1 shouldBeEqualTo awaitItem()
         }
+    }
+
+    @Test
+    fun `Test Shared flow itself whileSubscribed()`() = runTest {
+        val flow = flowOf("Event 1", "Event 2", "Event 3")
+        val sharedFlow = flow.onCompletion { println("Shared Flow Completed") }.shareIn(scope = this, replay = 1, started = SharingStarted.WhileSubscribed())
+        sharedFlow.test {
+            "Event 1" shouldBeEqualTo awaitItem()
+            "Event 2" shouldBeEqualTo awaitItem()
+            "Event 3" shouldBeEqualTo awaitItem()
+        }
+        coroutineContext.cancelChildren()
+    }
+
+    @Test
+    fun `Test Shared flow itself Lazily`() = runTest {
+        val flow = flowOf("Event 1", "Event 2", "Event 3")
+        val sharedFlow = flow.onCompletion { println("Shared Flow Completed") }.shareIn(scope = this, replay = 1, started = SharingStarted.Lazily)
+        sharedFlow.test {
+            "Event 1" shouldBeEqualTo awaitItem()
+            "Event 2" shouldBeEqualTo awaitItem()
+            "Event 3" shouldBeEqualTo awaitItem()
+        }
+        coroutineContext.cancelChildren()
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `Test Shared flow itself eagerly`() = runTest(UnconfinedTestDispatcher()) {
+        val flow = flowOf("Event 1", "Event 2", "Event 3")
+        val sharedFlow = flow.onCompletion { println("Shared Flow Completed") }.shareIn(scope = this, replay = 1, started = SharingStarted.Eagerly)
+        sharedFlow.test {
+            "Event 3" shouldBeEqualTo awaitItem()
+        }
+        coroutineContext.cancelChildren()
     }
 
 }
