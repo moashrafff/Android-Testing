@@ -1,13 +1,17 @@
 package com.moashraf.testingcourse.flows
 
 import app.cash.turbine.test
+import com.moashraf.testingcourse.coroutines.Profile
+import com.moashraf.testingcourse.coroutines.ProfileUiState
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -89,6 +93,23 @@ class FlowsPlaygroundTurbineTest {
             assertEquals("Something went wrong",awaitError().message)
         }
 
+    }
+
+    @Test
+    fun `Test hot flow itself`() = runTest {
+        val flow = flowOf(1, 2, 3, 4).stateIn(this)
+        flow.test {
+            4 shouldBeEqualTo awaitItem()
+        }
+    }
+
+    @Test
+    fun `Test mutable state flow itself`() = runTest {
+        val flow = MutableStateFlow<ProfileUiState>(ProfileUiState.Idle)
+        flow.tryEmit(ProfileUiState.Success(Profile("Mohamed", listOf(), 2.3f)))
+        flow.test {
+            ProfileUiState.Success(Profile("Mohamed", listOf(), 2.3f)) shouldBeEqualTo awaitItem()
+        }
     }
 
 }
