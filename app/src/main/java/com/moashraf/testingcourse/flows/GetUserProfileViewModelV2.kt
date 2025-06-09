@@ -6,29 +6,34 @@ import com.moashraf.testingcourse.coroutines.ProfileUiState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 
-class GetUserProfileViewModelV2(private val profileUserCase: GetUserProfileV2, private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO) : ViewModel() {
+class GetUserProfileViewModelV2(
+    private val profileUserCase: GetUserProfileV2,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+) : ViewModel() {
 
     private var _profileState = MutableStateFlow<ProfileUiState>(ProfileUiState.Idle)
     val profileState = _profileState
 
-    init {
-        getUserProfile()
-    }
-
-    private fun getUserProfile() {
-        viewModelScope.launch(ioDispatcher) {
-            _profileState.value = ProfileUiState.Loading
-            runCatching {
-                profileUserCase.getProfileDataAsync()
-            }
-                .onSuccess {
-//                    _profileState.value = ProfileUiState.Success(it)
-                }.onFailure {
-                    _profileState.value = ProfileUiState.Error(it.message ?: "Something went wrong")
+    private suspend fun getUserProfile() {
+        profileUserCase.getProfileDataAsync()
+            .onStart {
+                _profileState.update { ProfileUiState.Loading }
+            }.onEach {
+                val profile = it.getOrNull() ?: return@onEach
+                when {
+                    it.isSuccess -> _profileState.update { ProfileUiState.Success(profile) }
+                    it.isFailure -> _profileState.update { ProfileUiState.Error(it.toString()) }
                 }
-        }
+            }.catch {
+                _profileState.update { ProfileUiState.Error(it.toString()) }
+            }.launchIn(viewModelScope)
+
 
     }
 }

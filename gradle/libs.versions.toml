@@ -2,6 +2,7 @@
 agp = "8.9.1"
 kluentAndroid = "1.72"
 kotlin = "2.0.21"
+kover = "0.9.1"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -30,4 +31,5 @@ turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-Kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
