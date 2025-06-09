@@ -72,4 +72,4 @@ The goal of this repository is to:
 
 ## 🗓️ Status
 
-> ✅ In Progress 
+> ✅ Completed
