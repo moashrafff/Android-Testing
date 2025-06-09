@@ -4,14 +4,17 @@ import app.cash.turbine.test
 import com.moashraf.testingcourse.coroutines.Profile
 import com.moashraf.testingcourse.coroutines.ProfileUiState
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -90,7 +93,7 @@ class FlowsPlaygroundTurbineTest {
 
         flow.test {
             assertEquals(1, awaitItem())
-            assertEquals("Something went wrong",awaitError().message)
+            assertEquals("Something went wrong", awaitError().message)
         }
 
     }
@@ -109,6 +112,27 @@ class FlowsPlaygroundTurbineTest {
         flow.tryEmit(ProfileUiState.Success(Profile("Mohamed", listOf(), 2.3f)))
         flow.test {
             ProfileUiState.Success(Profile("Mohamed", listOf(), 2.3f)) shouldBeEqualTo awaitItem()
+        }
+    }
+
+    @Test
+    fun `Test Shared flow itself with replay`() = runTest {
+        val flow = MutableSharedFlow<Int>(replay = 1)
+        flow.tryEmit(1)
+        flow.test {
+            1 shouldBeEqualTo awaitItem()
+        }
+    }
+
+    @Test
+    fun `Test Shared flow itself`() = runTest {
+        val flow = MutableSharedFlow<Int>()
+        val job = launch(start = CoroutineStart.LAZY) {
+            flow.emit(1)
+        }
+        flow.test {
+            job.start()
+            1 shouldBeEqualTo awaitItem()
         }
     }
 
